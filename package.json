@@ -1,0 +1,21 @@
+{
+  "name": "brewery-log",
+  "version": "1.0.0",
+  "description": "A Simplified Multi-transport and Structured Logging Library for Brewery Project",
+  "main": "src/brewery-log.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "log",
+    "brewery"
+  ],
+  "author": "Levin Calado <jcalado@stratpoint.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "4.19.1",
+    "eslint-config-airbnb-base": "12.1.0",
+    "eslint-plugin-import": "2.12.0"
+  },
+  "dependencies": {}
+}
