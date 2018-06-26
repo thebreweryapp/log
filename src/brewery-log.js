@@ -36,13 +36,53 @@ class BreweryLog {
   /**
    * Sends the log message to all Logger Instances for logging
    * @param {Level} level
-   * @param {String} details
+   * @param {Object|String} details
    */
   log(level, details) {
     const date = new Date();
     return this.loggers.forEach(async (logger) => {
       await logger.log(date, level, details);
     });
+  }
+
+  /**
+   * logs a message with error level
+   * @param {Object|String} details
+   */
+  error(details) {
+    this.log('error', details);
+  }
+
+  /**
+   * logs a message with warn level
+   * @param {Object|String} details
+   */
+  warn(details) {
+    this.log('warn', details);
+  }
+
+  /**
+   * logs a message with info level
+   * @param {Object|String} details
+   */
+  info(details) {
+    this.log('info', details);
+  }
+
+  /**
+   * logs a message with verbose level
+   * @param {Object|String} details
+   */
+  verbose(details) {
+    this.log('verbose', details);
+  }
+
+  /**
+   * logs a message with debug level
+   * @param {Object|String} details
+   */
+  debug(details) {
+    this.log('debug', details);
   }
 
   /**
