@@ -36,21 +36,21 @@ class Logger {
   /**
    * Writes the log message to the specific log transport destination
    * @param {Level} level
-   * @param {String} details
+   * @param {String|Object} details
    */
   log(datetime, level, details) {
-    const logEntry = { datetime, level, details };
+    this.logEntry = { datetime, level, details };
     const logEntryLevel = this.getLogEntryLevel(level);
     if (this.isEntryAllowed(logEntryLevel)) { // if level is valid
       switch (this.transport) {
         case Transport.Console: {
           const console = new Console();
-          console.log(logEntry);
+          console.log(this.logEntry);
           break;
         }
         case Transport.File: {
           const file = new File(this.filename);
-          file.write(logEntry);
+          file.write(this.logEntry);
           break;
         }
         case Transport.Http: {
@@ -60,8 +60,6 @@ class Logger {
           break;
         }
       }
-    } else { // if level is not valid
-      console.error(new Error(`A log level specified is invalid on Log ${JSON.stringify(logEntry)}`));
     }
   }
 
@@ -76,6 +74,10 @@ class Logger {
         entryLevel = this.levels[key];
       }
     });
+    if (entryLevel.level === Number.MAX_SAFE_INTEGER) {
+      // if level is not valid
+      console.error(new Error(`A log level specified is invalid on Log ${JSON.stringify(this.logEntry)}`));
+    }
     return entryLevel;
   }
 
