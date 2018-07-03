@@ -36,9 +36,21 @@ class BreweryLog {
    */
   log(level, details) {
     const date = new Date();
-    const log = details;
-    if (level === 'error' && !this.debug) {
-      delete log.stack;
+    let log = details;
+    if (level === 'error' && details instanceof Error) {
+      // do not include stackTrace when in process.env.DEBUG is false or in production
+      if (process.env.DEBUG === 'false') {
+        log = {
+          name: details.name,
+          message: details.message,
+        };
+      } else {
+        log = {
+          name: details.name,
+          message: details.message,
+          stack: details.stack.split('From previous event:\n'),
+        };
+      }
     }
     return this.loggers.forEach(async (logger) => {
       await logger.log(date, level, log);
@@ -110,7 +122,6 @@ class BreweryLog {
    */
   setDefault() {
     this.loggers = [];
-    this.debug = process.env.DEBUG;
     const defaultLogger = new Logger();
     this.add(defaultLogger);
   }
