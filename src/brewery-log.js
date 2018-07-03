@@ -3,7 +3,6 @@ const Logger = require('./logger');
 
 class BreweryLog {
   constructor() {
-    this.loggers = [];
     this.setDefault();
   }
 
@@ -12,7 +11,6 @@ class BreweryLog {
    * @param {Object} config
    */
   initLogger(config) {
-    this.loggers = [];
     if (typeof config === 'object') { // check if config is valid JSON object
       if (config.transports) { // creates logger instances from transports property on config
         config.transports.forEach((transport) => {
@@ -27,8 +25,6 @@ class BreweryLog {
         const instance = { level: config.level };
         this.add(instance);
       }
-    } else { // set default logger if no config received
-      this.setDefault();
     }
     return this;
   }
@@ -40,8 +36,12 @@ class BreweryLog {
    */
   log(level, details) {
     const date = new Date();
+    const log = details;
+    if (level === 'error' && !this.debug) {
+      delete log.stack;
+    }
     return this.loggers.forEach(async (logger) => {
-      await logger.log(date, level, details);
+      await logger.log(date, level, log);
     });
   }
 
@@ -99,10 +99,18 @@ class BreweryLog {
     this.loggers.push(loggerInstance);
   }
 
+  setLevel(level) {
+    this.loggers.forEach((logger) => {
+      logger.setLevel(level);
+    });
+  }
+
   /**
    * creates a new logger instance with default properties
    */
   setDefault() {
+    this.loggers = [];
+    this.debug = process.env.DEBUG;
     const defaultLogger = new Logger();
     this.add(defaultLogger);
   }
