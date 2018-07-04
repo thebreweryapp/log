@@ -1,6 +1,6 @@
 {
   "name": "brewery-log",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "A Simplified Multi-transport and Structured Logging Library for Brewery Project",
   "main": "src/brewery-log.js",
   "scripts": {
