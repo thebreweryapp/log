@@ -7,6 +7,7 @@ A Simplified Multi-transport and Structured Logging Library for Brewery Project
 
 * [Install](#install)
 * [Usage](#usage)
+* [API](#api)
 * [Logging Levels](#logging-levels)
 * [Transports](#transports)
 * [Contributors](#contributors)
@@ -26,14 +27,13 @@ npm install brewery-log
 
 ```js
 const BreweryLog = require('brewery-log');
-const path = require('path');
 
 const logger = BreweryLog.initLogger({
   level: 'info', // Default log level for transports with no specified level
   transports: [
     { transport: 'Console' }, // Prints log to console
     { transport: 'File', filename: 'debug.log', level: 'debug' }, // Writes log with level `debug` and below to `debug.log`
-    { transport: 'File', filename: 'error.log', level: 'error' } // Writes error logs to `debug.log`
+    { transport: 'File', filename: 'error.log', level: 'error' } // Writes error logs to `error.log`
   ]
 });
 
@@ -47,6 +47,40 @@ logs to default `stdout` and `stderr` with logging level set to `info`
 const logger = require('brewery-log');
 logger.log('info', { message: 'Welcome to the Brewery' });
 ```
+
+
+## API
+
+## `BreweryLog`
+
+`.initLogger([config])` - Initialize the Brewery Logger
+- `config` ( Type: `Object`, Properties: `level`, `transports` )
+
+`.add([logger])` - Adds a new logger instance to our loggers
+- `logger` ( Type: `Object`, Properties: `transport`, `level`, `filename`)
+- **Note**: `filename` should be set if `transport` is `File`, see [Transports](#transports).
+
+`.setLevel([level], [details])` - Set Logging Level for all logger instances
+- `level` ( Type: `String` )
+
+`.log([level], [details])` - Sends the log message to all Logger Instances for logging
+- `level` ( Type: `String` )
+- `details` ( Type: `Object|String` )
+
+`.error([details])` - Logs a message with `error` level
+- `details` ( Type: `Object|String` )
+
+`.warn([details])` - Logs a message with `warn` level
+- `details` ( Type: `Object|String` )
+
+`.info([details])` - Logs a message with `info` level
+- `details` ( Type: `Object|String` )
+
+`.verbose([details])` - Logs a message with `verbose` level
+- `details` ( Type: `Object|String` )
+
+`.debug([details])` - Logs a message with `debug` level
+- `details` ( Type: `Object|String` )
 
 
 ## Logging Levels
@@ -105,7 +139,6 @@ logger.log('info', { message: 'Welcome to the Brewery' });
 ```sh
 {"datetime":"2018-06-21T08:05:55.266Z","level":'info',"details":{"message":"Welcome to the Brewery"}}
 ```
-
 
 ## Contributors
 
