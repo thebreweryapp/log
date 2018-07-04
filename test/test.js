@@ -1,22 +1,62 @@
+/* eslint-disable no-console */
+/* eslint-disable no-param-reassign */
 const breweryLog = require('../src/brewery-log');
 
 /* eslint import/no-extraneous-dependencies: ["error", {"devDependencies": true}] */
 const test = require('ava');
+const sinon = require('sinon');
+const fs = require('fs');
 
-test('Initialize default logger', (t) => {
+const getTimestamp = () => {
+  const currentDate = new Date();
+  const year = currentDate.getFullYear();
+  const month = (currentDate.getUTCMonth() + 1).toString().padStart(2, '0');
+  const date = currentDate.getDate().toString().padStart(2, '0');
+  const timestamp = `${year}-${month}-${date}`;
+  return timestamp;
+};
+
+const removeDirectory = (dir) => {
+  if (fs.existsSync(dir)) {
+    fs.readdirSync(dir).forEach((file) => {
+      const curPath = `${dir}/${file}`;
+      fs.unlinkSync(curPath);
+    });
+    fs.rmdirSync(dir);
+  }
+};
+
+test.before((t) => {
+  removeDirectory('./logs');
+
+  t.true(!fs.existsSync('./logs'));
+});
+
+test.beforeEach((t) => {
+  t.context.console = console;
+  console.log = sinon.spy();
+  console.error = sinon.spy();
+});
+
+test.afterEach((t) => {
+  console.log = t.context.console.log;
+  console.error = t.context.console.error;
+});
+
+test('Initialize logger - Default', (t) => {
   const logger = breweryLog.initLogger();
 
   t.is(Object.getPrototypeOf(logger), Object.getPrototypeOf(breweryLog));
 });
 
-test('Initialize logger with Log Level', (t) => {
+test('Initialize logger - Log Level', (t) => {
   const config = { level: 'info' };
   const logger = breweryLog.initLogger(config);
 
   t.is(logger.level, config.level);
 });
 
-test('Initialize logger with Console Transport', (t) => {
+test('Initialize logger - Console Transport', (t) => {
   const config = { transports: [{ transport: 'Console' }] };
   const logger = breweryLog.initLogger(config);
 
@@ -31,7 +71,22 @@ test('Initialize logger with File Transport', (t) => {
   t.is(logger.loggers[1].transport, 'File');
 });
 
-test('Initialize logger with Multiple File Transport', (t) => {
+test('Initialize logger - HTTP Transport', (t) => {
+  const config = { transports: [{ transport: 'Http' }] };
+  const logger = breweryLog.initLogger(config);
+
+  t.is(logger.loggers[1].transport, 'Http');
+});
+
+test('Initialize logger with File Transport', (t) => {
+  const config = { transports: [{ transport: 'File', filename: 'test.log' }] };
+  const logger = breweryLog.initLogger(config);
+
+  // check index [1] because we have a Console element already by default on index [0]
+  t.is(logger.loggers[1].transport, 'File');
+});
+
+test('Initialize logger - Multiple File Transport', (t) => {
   const config = {
     transports: [
       { transport: 'File', filename: 'test.log' },
@@ -51,10 +106,10 @@ test('Initialize logger with Multiple File Transport', (t) => {
   t.true(fileLogger > 1);
 });
 
-test('Initialize logger with Multiple Transport', (t) => {
+test('Initialize logger - Multiple Transport', (t) => {
   const config = {
     transports: [
-      { transport: 'Console' },
+      { transport: 'Console', level: 'info' },
       { transport: 'File', filename: 'test.log' },
       { transport: 'File', filename: 'another.log' },
       { transport: 'File', filename: 'error.log', level: 'error' },
@@ -64,6 +119,14 @@ test('Initialize logger with Multiple Transport', (t) => {
   const logger = breweryLog.initLogger(config);
 
   t.true(logger.loggers.length > 1);
+});
+
+test('Logging - Unknown Transport Type', (t) => {
+  const config = { transports: [{ transport: 'Unknown' }] };
+  const logger = breweryLog.initLogger(config);
+
+  logger.log('level', 'test');
+  t.true(true);
 });
 
 test('Add a logger instance', (t) => {
@@ -88,4 +151,121 @@ test('Invalid - File Transport no filename', (t) => {
   const err = t.throws(() => logger.add(fileLogger));
 
   t.is(err.name, 'Error');
+});
+
+test('Console Log', (t) => {
+  const logger = breweryLog.initLogger();
+
+  logger.log('info', 'Test log on Console');
+
+  t.true(console.log.calledOnce);
+});
+
+test('Console Error', (t) => {
+  const logger = breweryLog.initLogger();
+
+  logger.log('error', 'Test log on Console');
+
+  t.true(console.error.calledOnce);
+});
+
+test('Log Entry - unknown log level', (t) => {
+  const logger = breweryLog.initLogger();
+
+  logger.log('invalid', 'Test log with invalid level');
+  t.true(console.error.calledOnce);
+});
+
+test('Log Entry - greater that log level config', (t) => {
+  const logger = breweryLog.initLogger();
+
+  logger.debug('Test log with level greater than log level config');
+  t.falsy(console.log.calledOnce);
+});
+
+test('Log to File - with file extension', (t) => {
+  const logger = breweryLog.initLogger();
+  const fileLogger = { transport: 'File', filename: './logs/test.log' };
+  logger.add(fileLogger);
+
+  logger.log('info', 'Test write to file');
+
+  t.true(fs.existsSync(`./logs/test-${getTimestamp()}.log`));
+});
+
+test('Log to File - without file extension', (t) => {
+  const logger = breweryLog.initLogger();
+  const fileLogger = { transport: 'File', filename: './logs/test' };
+  logger.add(fileLogger);
+
+  logger.log('info', 'Test write to file');
+
+  t.true(fs.existsSync(`./logs/test-${getTimestamp()}`));
+});
+
+test('Log to Http', (t) => {
+  const config = { transports: [{ transport: 'Http' }] };
+  const logger = breweryLog.initLogger(config);
+
+  logger.log('info', 'Test log via Http');
+
+  t.true(true);
+});
+
+test('Log to Unknown', (t) => {
+  const config = { transports: [{ transport: 'Unknown' }] };
+  const logger = breweryLog.initLogger(config);
+
+  logger.log('info', 'Test log with unknown transport type config');
+
+  t.true(true);
+});
+
+test('Log level function - ERROR', (t) => {
+  const logger = breweryLog.initLogger();
+
+  logger.error(new Error('Test log.error function'));
+  t.true(console.error.calledOnce);
+});
+
+test('Log level function - WARN', (t) => {
+  const logger = breweryLog.initLogger();
+
+  logger.warn('Test log.warn function');
+  t.true(console.log.calledOnce);
+});
+
+test('Log level function - INFO', (t) => {
+  const logger = breweryLog.initLogger();
+
+  logger.info('Test log.info function');
+  t.true(console.log.calledOnce);
+});
+
+test('Log level function - VERBOSE', (t) => {
+  const logger = breweryLog.initLogger({ level: 'verbose' });
+
+  logger.verbose('Test log.verbose function');
+  t.true(console.log.calledOnce);
+});
+
+test('Log level function - DEBUG', (t) => {
+  const logger = breweryLog.initLogger({ level: 'debug' });
+
+  logger.debug('Test log.debug function');
+  t.true(console.log.calledOnce);
+});
+
+test('Error Trace - Production', (t) => {
+  process.env.DEBUG = false;
+  const logger = breweryLog.initLogger();
+
+  logger.error(new Error('Test log.error function on production'));
+  t.true(console.error.calledOnce);
+});
+
+test.after('Cleanup', (t) => {
+  removeDirectory('./logs');
+
+  t.true(!fs.existsSync('./logs'));
 });
