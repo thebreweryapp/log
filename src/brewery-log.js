@@ -13,7 +13,10 @@ class BreweryLog {
   initLogger(config) {
     this.setDefault();
     if (typeof config === 'object') { // check if config is valid JSON object
-      if (config.level) { this.level = config.level; }
+      if (config.level) {
+        this.level = config.level;
+        this.setLevel(config.level);
+      }
       if (config.transports) { // creates logger instances from transports property on config
         config.transports.forEach((transport) => {
           const instance = {
@@ -21,11 +24,12 @@ class BreweryLog {
             transport: transport.transport,
             filename: transport.filename,
           };
-          this.add(instance);
+          if (transport.transport === 'Console') { // if Console is configured change our default Console logger
+            this.setLevel(transport.level ? transport.level : config.level);
+          } else {
+            this.add(instance);
+          }
         });
-      } else {
-        const instance = { level: config.level };
-        this.add(instance);
       }
     }
     return this;
