@@ -59,7 +59,11 @@ class BreweryLog {
       }
     }
     return this.loggers.forEach(async (logger) => {
-      await logger.log(date, level, log);
+      try {
+        await logger.log(date, level, log);
+      } catch (e) {
+        logger.log(date, 'error', e.message);
+      }
     });
   }
 
