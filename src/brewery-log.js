@@ -11,7 +11,9 @@ class BreweryLog {
    * @param {Object} config
    */
   initLogger(config) {
+    this.setDefault();
     if (typeof config === 'object') { // check if config is valid JSON object
+      if (config.level) { this.level = config.level; }
       if (config.transports) { // creates logger instances from transports property on config
         config.transports.forEach((transport) => {
           const instance = {
@@ -103,14 +105,17 @@ class BreweryLog {
    */
   add(logger) {
     if (logger.transport === 'File' && logger.filename === undefined) {
-      console.error(new Error(`A logger transport instance ${JSON.stringify(logger)} has an invalid configuration. No "file" property found.`));
-      return;
+      throw Error(`A logger transport instance ${JSON.stringify(logger)} has an invalid configuration. No "filename" property found.`);
     }
     const loggerInstance = new Logger();
     loggerInstance.configure(logger);
     this.loggers.push(loggerInstance);
   }
 
+  /**
+   * Set Logging Level for all logger instances
+   * @param {String} level
+   */
   setLevel(level) {
     this.loggers.forEach((logger) => {
       logger.setLevel(level);
