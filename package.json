@@ -4,7 +4,9 @@
   "description": "A Simplified Multi-transport and Structured Logging Library for Brewery Project",
   "main": "src/brewery-log.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "nyc --reporter=html --reporter=text ava test/*.js --verbose",
+    "test:watch": "ava test/*.js --verbose --watch",
+    "ava": "nyc ava --verbose"
   },
   "keywords": [
     "log",
@@ -13,9 +15,11 @@
   "author": "Levin Calado <jcalado@stratpoint.com>",
   "license": "MIT",
   "devDependencies": {
+    "ava": "^0.25.0",
     "eslint": "4.19.1",
     "eslint-config-airbnb-base": "12.1.0",
-    "eslint-plugin-import": "2.12.0"
+    "eslint-plugin-import": "2.12.0",
+    "nyc": "^12.0.2"
   },
   "dependencies": {}
 }
