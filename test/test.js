@@ -20,8 +20,7 @@ test('Initialize logger with Console Transport', (t) => {
   const config = { transports: [{ transport: 'Console' }] };
   const logger = breweryLog.initLogger(config);
 
-  // check index [1] because we have a Console element already by default on index [0]
-  t.is(logger.loggers[1].transport, 'Console');
+  t.is(logger.loggers[0].transport, 'Console');
 });
 
 test('Initialize logger with File Transport', (t) => {
