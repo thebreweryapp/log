@@ -17,11 +17,10 @@ class Logger {
     if (options.level) {
       this.instanceLevel = this.getLogEntryLevel(options.level);
     }
-    if (options.transport) {
-      this.transport = options.transport;
-      if (this.transport === 'File') {
-        this.filename = options.filename;
-      }
+
+    this.transport = options.transport;
+    if (this.transport === 'File') {
+      this.filename = options.filename;
     }
   }
 
@@ -79,7 +78,7 @@ class Logger {
     });
     if (entryLevel.level === Number.MAX_SAFE_INTEGER) {
       // if level is not valid
-      console.error(new Error(`A log level specified is invalid on Log ${JSON.stringify(this.logEntry)}`));
+      throw Error(`A log level specified is invalid on Log ${JSON.stringify(this.logEntry)}`);
     }
     return entryLevel;
   }
