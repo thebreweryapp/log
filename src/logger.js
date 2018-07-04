@@ -69,6 +69,9 @@ class Logger {
    */
   getLogEntryLevel(level) {
     let entryLevel = new Level('invalid', Number.MAX_SAFE_INTEGER);
+    if (level === undefined) {
+      entryLevel = this.levels.INFO;
+    }
     Object.keys(this.levels).forEach((key) => {
       if (this.levels[key].name === level) {
         entryLevel = this.levels[key];
