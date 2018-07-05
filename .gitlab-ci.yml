@@ -3,6 +3,11 @@ image: node:latest
 stages:
   - build
   - test
+  - publish
+
+variables:
+  OPENSHIFT_SERVER: ip-10-0-1-198.ec2.internal
+  OPENSHIFT_DOMAIN: 52.23.233.62.xip.ioa
 
 build:
   stage: build
@@ -19,3 +24,15 @@ test:
   artifacts:
     paths:
       - coverage/
+
+publish:
+  stage: publish
+  when: manual
+  script:
+    - echo '//registry.npmjs.org/:_authToken=${NPM_TOKEN}'>.npmrc
+    - npm publish
+  environment:
+    name: npmjs
+    url: https://www.npmjs.com/package/brewery-log
+  only:
+    - master
