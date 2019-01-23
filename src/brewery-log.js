@@ -4,6 +4,7 @@ const Logger = require('./logger');
 class BreweryLog {
   constructor() {
     this.setDefault();
+    this.out = console;
   }
 
   /**
@@ -105,6 +106,22 @@ class BreweryLog {
    */
   debug(details) {
     this.log('debug', details);
+  }
+
+  /**
+   * Start an execution timer
+   * @param {String} label
+   */
+  time(label) {
+    this.out.time(label);
+  }
+
+  /**
+   * End an execution timer and prints the execution time taken
+   * @param {String} label
+   */
+  timeEnd(label) {
+    this.out.timeEnd(label);
   }
 
   /**
