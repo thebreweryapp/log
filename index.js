@@ -26,3 +26,5 @@ logger.log('verbose', { message: 'test log verbose' });
 logger.log('error', { message: 'test log error' });
 logger.log('debug', { message: 'test log debug' });
 logger.log('invalid', { message: 'test log invalid' });
+logger.time('test execution timer');
+logger.timeEnd('test execution timer');
