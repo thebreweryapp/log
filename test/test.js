@@ -36,11 +36,15 @@ test.beforeEach((t) => {
   t.context.console = console;
   console.log = sinon.spy();
   console.error = sinon.spy();
+  console.time = sinon.spy();
+  console.timeEnd = sinon.spy();
 });
 
 test.afterEach((t) => {
   console.log = t.context.console.log;
   console.error = t.context.console.error;
+  console.time = t.context.console.time;
+  console.timeEnd = t.context.console.timeEnd;
 });
 
 test('Initialize logger - Default', (t) => {
@@ -262,6 +266,15 @@ test('Error Trace - Production', (t) => {
 
   logger.error(new Error('Test log.error function on production'));
   t.true(console.error.calledOnce);
+});
+
+test('Log Execution Time', (t) => {
+  const logger = breweryLog;
+
+  logger.time('test execution timer');
+  logger.timeEnd('test execution timer');
+
+  t.true(console.time.calledOnce && console.timeEnd.calledOnce);
 });
 
 test.after('Cleanup', (t) => {
