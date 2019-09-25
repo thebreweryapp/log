@@ -169,3 +169,5 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.gitignore.io/api/node,sonar,linux,macos,windows,sonarqube
+
+reports

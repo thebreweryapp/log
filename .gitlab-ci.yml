@@ -1,38 +1,68 @@
 image: node:latest
 
 stages:
-  - build
-  - test
-  - publish
+  - dependencies
+  - reports
+  - analyze
 
-variables:
-  OPENSHIFT_SERVER: ip-10-0-1-198.ec2.internal
-  OPENSHIFT_DOMAIN: 52.23.233.62.xip.ioa
-
-build:
-  stage: build
+Install Dependencies:
+  stage: dependencies
   script:
     - npm install
   artifacts:
+    expire_in: '300'
     paths:
-      - node_modules/
-
-test:
-  stage: test
-  script:
-    - npm test
-  artifacts:
-    paths:
-      - coverage/
-
-publish:
-  stage: publish
-  when: manual
-  script:
-    - echo '//registry.npmjs.org/:_authToken=${NPM_TOKEN}'>.npmrc
-    - npm publish
-  environment:
-    name: npmjs
-    url: https://www.npmjs.com/package/brewery-log
+      - /thebrewery/amberjs/log/node_modules/
   only:
     - master
+
+Code Linting:
+  stage: reports
+  dependencies:
+    - Install Dependencies
+  script:
+    - npm run lint
+  artifacts:
+    expire_in: '300'
+    paths:
+      - /thebrewery/amberjs/log/reports/
+  only:
+    - master
+
+Unit Testing:
+  stage: reports
+  dependencies:
+    - Install Dependencies
+  script:
+    - npm run test
+  artifacts:
+    expire_in: '300'
+    paths:
+      - /thebrewery/amberjs/log/coverage/
+  only:
+    - master
+
+Code Quality Analysis:
+  image: agaphetos/sonar-scanner:3.3.0-alpine
+  stage: analyze
+  dependencies:
+    - Code Linting
+    - Unit Testing
+  script:
+    - hwclock -s
+    - export PROJECT_VERSION=$(node -p "require('/thebrewery/amberjs/log/package.json').version")
+    - sonar-scanner -X -Dsonar.host.url=$SONARQUBE_URL -Dsonar.projectBaseDir=/thebrewery/amberjs/log -Dsonar.login=$SONARQUBE_TOKEN -Dsonar.projectVersion=$PROJECT_VERSION
+  only:
+    - master
+
+# publish:
+#   stage: publish
+#   when: manual
+#   script:
+#     - echo '//registry.npmjs.org/:_authToken=${NPM_TOKEN}'>.npmrc
+#     - npm publish
+#   environment:
+#     name: npmjs
+#     url: https://www.npmjs.com/package/brewery-log
+#   only:
+#     - master
