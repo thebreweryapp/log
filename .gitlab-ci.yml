@@ -34,7 +34,7 @@ Unit Testing:
   dependencies:
     - Install Dependencies
   script:
-    - npm run test
+    - cd /thebrewery/amberjs/log && npm run test
   artifacts:
     expire_in: '300'
     paths:
