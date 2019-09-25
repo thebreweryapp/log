@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 /* eslint-disable no-param-reassign */
-const breweryLog = require('../src/brewery-log');
+const amberLog = require('../src/AmberLog');
 
 /* eslint import/no-extraneous-dependencies: ["error", {"devDependencies": true}] */
 const test = require('ava');
@@ -48,28 +48,28 @@ test.afterEach((t) => {
 });
 
 test('Initialize logger - Default', (t) => {
-  const logger = breweryLog.initLogger();
+  const logger = amberLog.initLogger();
 
-  t.is(Object.getPrototypeOf(logger), Object.getPrototypeOf(breweryLog));
+  t.is(Object.getPrototypeOf(logger), Object.getPrototypeOf(amberLog));
 });
 
 test('Initialize logger - Log Level', (t) => {
   const config = { level: 'info' };
-  const logger = breweryLog.initLogger(config);
+  const logger = amberLog.initLogger(config);
 
   t.is(logger.level, config.level);
 });
 
 test('Initialize logger - Console Transport', (t) => {
   const config = { transports: [{ transport: 'Console' }] };
-  const logger = breweryLog.initLogger(config);
+  const logger = amberLog.initLogger(config);
 
   t.is(logger.loggers[0].transport, 'Console');
 });
 
 test('Initialize logger with File Transport', (t) => {
   const config = { transports: [{ transport: 'File', filename: 'test.log' }] };
-  const logger = breweryLog.initLogger(config);
+  const logger = amberLog.initLogger(config);
 
   // check index [1] because we have a Console element already by default on index [0]
   t.is(logger.loggers[1].transport, 'File');
@@ -77,17 +77,9 @@ test('Initialize logger with File Transport', (t) => {
 
 test('Initialize logger - HTTP Transport', (t) => {
   const config = { transports: [{ transport: 'Http' }] };
-  const logger = breweryLog.initLogger(config);
+  const logger = amberLog.initLogger(config);
 
   t.is(logger.loggers[1].transport, 'Http');
-});
-
-test('Initialize logger with File Transport', (t) => {
-  const config = { transports: [{ transport: 'File', filename: 'test.log' }] };
-  const logger = breweryLog.initLogger(config);
-
-  // check index [1] because we have a Console element already by default on index [0]
-  t.is(logger.loggers[1].transport, 'File');
 });
 
 test('Initialize logger - Multiple File Transport', (t) => {
@@ -98,7 +90,7 @@ test('Initialize logger - Multiple File Transport', (t) => {
     ],
   };
 
-  const logger = breweryLog.initLogger(config);
+  const logger = amberLog.initLogger(config);
 
   let fileLogger = 0;
   logger.loggers.forEach((element) => {
@@ -120,21 +112,21 @@ test('Initialize logger - Multiple Transport', (t) => {
     ],
   };
 
-  const logger = breweryLog.initLogger(config);
+  const logger = amberLog.initLogger(config);
 
   t.true(logger.loggers.length > 1);
 });
 
 test('Logging - Unknown Transport Type', (t) => {
   const config = { transports: [{ transport: 'Unknown' }] };
-  const logger = breweryLog.initLogger(config);
+  const logger = amberLog.initLogger(config);
 
   logger.log('level', 'test');
   t.true(true);
 });
 
 test('Add a logger instance', (t) => {
-  const logger = breweryLog.initLogger();
+  const logger = amberLog.initLogger();
 
   const fileLogger = { transport: 'File', filename: 'test.log' };
   logger.add(fileLogger);
@@ -149,7 +141,7 @@ test('Add a logger instance', (t) => {
 });
 
 test('Invalid - File Transport no filename', (t) => {
-  const logger = breweryLog.initLogger();
+  const logger = amberLog.initLogger();
 
   const fileLogger = { transport: 'File' };
   const err = t.throws(() => logger.add(fileLogger));
@@ -158,7 +150,7 @@ test('Invalid - File Transport no filename', (t) => {
 });
 
 test('Console Log', (t) => {
-  const logger = breweryLog.initLogger();
+  const logger = amberLog.initLogger();
 
   logger.log('info', 'Test log on Console');
 
@@ -166,7 +158,7 @@ test('Console Log', (t) => {
 });
 
 test('Console Error', (t) => {
-  const logger = breweryLog.initLogger();
+  const logger = amberLog.initLogger();
 
   logger.log('error', 'Test log on Console');
 
@@ -174,21 +166,21 @@ test('Console Error', (t) => {
 });
 
 test('Log Entry - unknown log level', (t) => {
-  const logger = breweryLog.initLogger();
+  const logger = amberLog.initLogger();
 
   logger.log('invalid', 'Test log with invalid level');
   t.true(console.error.calledOnce);
 });
 
 test('Log Entry - greater that log level config', (t) => {
-  const logger = breweryLog.initLogger();
+  const logger = amberLog.initLogger();
 
   logger.debug('Test log with level greater than log level config');
   t.falsy(console.log.calledOnce);
 });
 
 test('Log to File - with file extension', (t) => {
-  const logger = breweryLog.initLogger();
+  const logger = amberLog.initLogger();
   const fileLogger = { transport: 'File', filename: './logs/test.log' };
   logger.add(fileLogger);
 
@@ -198,18 +190,18 @@ test('Log to File - with file extension', (t) => {
 });
 
 test('Log to File - without file extension', (t) => {
-  const logger = breweryLog.initLogger();
+  const logger = amberLog.initLogger();
   const fileLogger = { transport: 'File', filename: './logs/test' };
   logger.add(fileLogger);
 
   logger.log('info', 'Test write to file');
 
-  t.true(fs.existsSync(`./logs/test-${getTimestamp()}`));
+  t.true(fs.existsSync(`./logs/test-${getTimestamp()}.log`));
 });
 
 test('Log to Http', (t) => {
   const config = { transports: [{ transport: 'Http' }] };
-  const logger = breweryLog.initLogger(config);
+  const logger = amberLog.initLogger(config);
 
   logger.log('info', 'Test log via Http');
 
@@ -218,7 +210,7 @@ test('Log to Http', (t) => {
 
 test('Log to Unknown', (t) => {
   const config = { transports: [{ transport: 'Unknown' }] };
-  const logger = breweryLog.initLogger(config);
+  const logger = amberLog.initLogger(config);
 
   logger.log('info', 'Test log with unknown transport type config');
 
@@ -226,35 +218,35 @@ test('Log to Unknown', (t) => {
 });
 
 test('Log level function - ERROR', (t) => {
-  const logger = breweryLog.initLogger();
+  const logger = amberLog.initLogger();
 
   logger.error(new Error('Test log.error function'));
   t.true(console.error.calledOnce);
 });
 
 test('Log level function - WARN', (t) => {
-  const logger = breweryLog.initLogger();
+  const logger = amberLog.initLogger();
 
   logger.warn('Test log.warn function');
   t.true(console.log.calledOnce);
 });
 
 test('Log level function - INFO', (t) => {
-  const logger = breweryLog.initLogger();
+  const logger = amberLog.initLogger();
 
   logger.info('Test log.info function');
   t.true(console.log.calledOnce);
 });
 
 test('Log level function - VERBOSE', (t) => {
-  const logger = breweryLog.initLogger({ level: 'verbose' });
+  const logger = amberLog.initLogger({ level: 'verbose' });
 
   logger.verbose('Test log.verbose function');
   t.true(console.log.calledOnce);
 });
 
 test('Log level function - DEBUG', (t) => {
-  const logger = breweryLog.initLogger({ level: 'debug' });
+  const logger = amberLog.initLogger({ level: 'debug' });
 
   logger.debug('Test log.debug function');
   t.true(console.log.calledOnce);
@@ -262,14 +254,14 @@ test('Log level function - DEBUG', (t) => {
 
 test('Error Trace - Production', (t) => {
   process.env.DEBUG = false;
-  const logger = breweryLog.initLogger();
+  const logger = amberLog.initLogger();
 
   logger.error(new Error('Test log.error function on production'));
   t.true(console.error.calledOnce);
 });
 
 test('Log Execution Time', (t) => {
-  const logger = breweryLog;
+  const logger = amberLog;
 
   logger.time('test execution timer');
   logger.timeEnd('test execution timer');

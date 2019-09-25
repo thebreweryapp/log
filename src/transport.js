@@ -1,5 +1,5 @@
-const Console = require('./transports/console');
-const File = require('./transports/file');
+const Console = require('./transports/LogConsole');
+const File = require('./transports/File');
 
 const Transport = {
   Console: 'Console',

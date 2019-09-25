@@ -1,4 +1,4 @@
-const breweryLog = require('./src/brewery-log');
+const amberLog = require('./src/AmberLog');
 const path = require('path');
 
 const errorLog = path.join(__dirname, './logs/error.log');
@@ -7,7 +7,7 @@ const infoLog = path.join(__dirname, './logs/info.log');
 const verbLog = path.join(__dirname, './logs/verbose.log');
 const debugLog = path.join(__dirname, './logs/debug.log');
 
-const logger = breweryLog.initLogger({
+const logger = amberLog.initLogger({
   level: 'info',
   transports: [
     { transport: 'Console' },

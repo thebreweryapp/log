@@ -1,18 +1,23 @@
 {
-  "name": "brewery-log",
+  "name": "@amberjs/log",
   "version": "1.2.0",
-  "description": "A Simplified Multi-transport and Structured Logging Library for Brewery Project",
-  "main": "src/brewery-log.js",
+  "description": "A Simplified Multi-transport and Structured Logging Library for Amber.js",
+  "main": "src/AmberLog.js",
   "scripts": {
-    "test": "nyc --reporter=html --reporter=text ava test/*.js --verbose",
-    "test:watch": "ava test/*.js --verbose --watch",
-    "ava": "nyc ava --verbose"
+    "test": "nyc --reporter=html --reporter=text ava -s test/*.js --verbose",
+    "test:watch": "ava -s test/*.js --verbose --watch",
+    "ava": "nyc ava -s --verbose"
   },
   "keywords": [
     "log",
-    "brewery"
+    "brewery",
+    "amberjs"
   ],
   "author": "Levin Calado <jcalado@stratpoint.com>",
+  "repository": {
+    "type": "git",
+    "url": "git@gitlab.stratpoint.dev:thebrewery/amberjs/log.git"
+  },
   "license": "MIT",
   "devDependencies": {
     "ava": "^2.4.0",

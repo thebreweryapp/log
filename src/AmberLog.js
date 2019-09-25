@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
-const Logger = require('./logger');
+const Logger = require('./Logger');
 
-class BreweryLog {
+class AmberLog {
   constructor() {
     this.setDefault();
     this.out = console;
@@ -157,4 +157,4 @@ class BreweryLog {
   }
 }
 
-module.exports = new BreweryLog();
+module.exports = new AmberLog();

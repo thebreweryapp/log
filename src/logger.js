@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-const { Level, LEVEL } = require('./levels');
+const { Level, LEVEL } = require('./Level');
 const { Console, File, Transport } = require('./transport');
 
 class Logger {
