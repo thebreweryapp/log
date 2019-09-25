@@ -1,6 +1,6 @@
-# brewery-log
+# @amberjs/log
 
-A Simplified Multi-transport and Structured Logging Library for Brewery Project
+A Simplified Multi-transport and Structured Logging Library for Amber.js
 
 
 ## Table of Contents
@@ -17,7 +17,7 @@ A Simplified Multi-transport and Structured Logging Library for Brewery Project
 ## Install
 
 ```sh
-npm install brewery-log
+npm install @amberjs/log
 ```
 
 
@@ -26,9 +26,9 @@ npm install brewery-log
 **RECOMMENDED:** create your own logger definition
 
 ```js
-const BreweryLog = require('brewery-log');
+const AmberLog = require('@amberjs/log');
 
-const logger = BreweryLog.initLogger({
+const logger = AmberLog.initLogger({
   level: 'info', // Default log level for transports with no specified level
   transports: [
     { transport: 'Console' }, // Prints log to console
@@ -40,18 +40,18 @@ const logger = BreweryLog.initLogger({
 logger.log('info', { message: 'Welcome to the Brewery' });
 ```
 
-**DEFAULT:** you may also log it directly using the default `require('brewery-log')`, but this only 
+**DEFAULT:** you may also log it directly using the default `require('@amberjs/log')`, but this only 
 logs to default `stdout` and `stderr` with logging level set to `info`
 
 ```js
-const logger = require('brewery-log');
+const logger = require('@amberjs/log');
 logger.log('info', { message: 'Welcome to the Brewery' });
 ```
 
 
 ## API
 
-## `BreweryLog`
+## `AmberLog`
 
 `.initLogger([config])` - Initialize the Brewery Logger
 - `config` ( Type: `Object`, Properties: `level`, `transports` )
@@ -103,12 +103,12 @@ const levels = {
 
 ## Transports
 
-The core transports that are currently available to BreweryLog are:
+The core transports that are currently available to AmberLog are:
 * `Console` - writes the log to the default stdout and stderr
 
 **USAGE**
 ```js
-const logger = BreweryLog.initLogger({
+const logger = AmberLog.initLogger({
   transports: [{ transport: 'Console', level: 'info' }]
 });
 
@@ -126,7 +126,7 @@ logger.log('info', { message: 'Welcome to the Brewery' });
 
 **USAGE**
 ```js
-const logger = BreweryLog.initLogger({
+const logger = AmberLog.initLogger({
   transports: [
     transport: 'File', filename: 'debug.log', level: 'debug'
   ],
