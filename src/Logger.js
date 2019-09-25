@@ -52,9 +52,9 @@ class Logger {
           file.write(this.logEntry);
           break;
         }
-        case Transport.Http: {
-          break;
-        }
+        // case Transport.Http: {
+        //   break;
+        // }
         default: {
           break;
         }
